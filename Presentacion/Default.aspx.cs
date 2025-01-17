@@ -12,14 +12,26 @@ namespace Presentacion
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["ListaDirecciones"] == null)
+            if (!IsPostBack)
             {
-                DireccionNegocio negocio = new DireccionNegocio();
-                Session.Add("ListaDirecciones", negocio.listar());
-            }
+                if (Session["ListaDireccion"] == null)
+                {
+                    DireccionNegocio negocio = new DireccionNegocio();
+                    Session.Add("ListaDireccion", negocio.listar());
+                }
 
-            DataGridViewDireccion.DataSource = Session["ListaAutos"];
-            DataGridViewDireccion.DataBind();
+                // Verifica que la lista no sea null antes de enlazarla
+                if (Session["ListaDireccion"] != null)
+                {
+                    GridViewDireccion.DataSource = Session["ListaDireccion"];
+                    GridViewDireccion.DataBind();
+                }
+            }
+        }
+        protected void GridViewDireccion_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var id = GridViewDireccion.SelectedDataKey.Value.ToString();
+            Response.Redirect("DireccionForm.aspx?id=" + id);
         }
     }
 }
